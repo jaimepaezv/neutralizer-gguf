@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GGUF Model Text Processor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 200px;
+    }
+
+    button {
+      margin-top: 10px;
+    }
+
+    pre {
+      background: #f4f4f4;
+      padding: 10px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h1>Process Text Using GGUF Model</h1>
+  <form id="textForm">
+    <textarea id="inputText" placeholder="Enter your text here..."></textarea>
+    <button type="submit">Process Text</button>
+  </form>
+  <h2>Processed Text:</h2>
+  <pre id="result"></pre>
+
+  <script>
+    const form = document.getElementById("textForm");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const text = document.getElementById("inputText").value;
+
+      if (!text) {
+        result.textContent = "Please enter some text.";
+        return;
+      }
+
+      result.textContent = "Processing...";
+
+      try {
+        const response = await fetch("/process-text", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+
+        const data = await response.json();
+        if (data.transformedText) {
+          result.textContent = data.transformedText;
+        } else {
+          result.textContent = "Error processing the text.";
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        result.textContent = "Failed to process the text.";
+      }
+    });
+  </script>
+</body>
+</html>
